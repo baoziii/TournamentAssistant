@@ -21,7 +21,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
         {
             if (addedToHierarchy)
             {
-                SetTitle("Choose your path", ViewController.AnimationType.None);
+                SetTitle("选择你接下来要做的事", ViewController.AnimationType.None);
                 showBackButton = true;
 
                 _serverModeSelectionViewController = BeatSaberUI.CreateViewController<ServerModeSelection>();
@@ -44,8 +44,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 UnityMainThreadDispatcher.Instance().Enqueue(() =>
                 {
                     _splashScreen = BeatSaberUI.CreateViewController<SplashScreen>();
-                    _splashScreen.StatusText = $"Update required! You are on \'{SharedConstructs.Version}\', new version is \'{newVersion}\'\n" +
-                        $"Visit https://github.com/MatrikMoon/TournamentAssistant/releases to download the new version";
+                    _splashScreen.StatusText = $"你需要更新插件！当前版本： \'{SharedConstructs.Version}\', 新版本： \'{newVersion}\'\n请从主办方处获取新版本";
                     PresentViewController(_splashScreen);
                 });
             }

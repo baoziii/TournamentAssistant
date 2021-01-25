@@ -68,8 +68,8 @@ namespace TournamentAssistant.Behaviors
             levelBar.GetField<TextMeshProUGUI>("_difficultyText").gameObject.SetActive(false);
             oldLevelText = levelBar.GetField<TextMeshProUGUI>("_songNameText").text;
             oldAuthorText = levelBar.GetField<TextMeshProUGUI>("_authorNameText").text;
-            levelBar.GetField<TextMeshProUGUI>("_songNameText").text = "Please wait";
-            levelBar.GetField<TextMeshProUGUI>("_authorNameText").text = "Setting up synchronized streams";
+            levelBar.GetField<TextMeshProUGUI>("_songNameText").text = "请稍等";
+            levelBar.GetField<TextMeshProUGUI>("_authorNameText").text = "正在同步直播信号";
         }
 
         public void Resume()

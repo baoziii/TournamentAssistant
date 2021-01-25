@@ -28,15 +28,15 @@ namespace TournamentAssistantShared.Discord.Modules
             return ((IGuildUser)Context.User).GuildPermissions.Has(GuildPermission.Administrator);
         }
 
-        [Command("test")]
-        [Summary("A test command, for quick access to test features")]
+        [Command("测试")]
+        [Summary("就是测试而已")]
         public async Task Test([Remainder] string args = null)
         {
             if (IsAdmin()) await Task.Delay(0);
         }
 
-        [Command("listModules")]
-        [Summary("Lists loaded bot modules")]
+        [Command("模组列表")]
+        [Summary("列出所有机器人模组")]
         public async Task ListModules()
         {
             var reply = string.Empty;
@@ -44,12 +44,12 @@ namespace TournamentAssistantShared.Discord.Modules
             await ReplyAsync(reply);
         }
 
-        [Command("help")]
-        [Summary("Shows help message")]
+        [Command("帮助")]
+        [Summary("显示帮助信息")]
         public async Task HelpAsync()
         {
             var builder = new EmbedBuilder();
-            builder.Title = "<:page_with_curl:735592941338361897> Commands";
+            builder.Title = "<:page_with_curl:735592941338361897> 命令";
             builder.Color = new Color(random.Next(255), random.Next(255), random.Next(255));
 
             foreach (var module in CommandService.Modules)

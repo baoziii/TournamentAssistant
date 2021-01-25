@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:TournamentAssistantUI.UI"
       mc:Ignorable="d" 
       d:DesignHeight="670" d:DesignWidth="720"
-      Title="ConnectPage"
+      Title="连接页"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       TextElement.FontWeight="Regular"
@@ -39,7 +39,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <TextBlock HorizontalAlignment="Center" Margin="0,0,0,10" FontSize="15">
-                        Ask the tournament organizer for the Host IP and click Connect here if you're a match coordinator
+                        如果你是协调员的话向主办方询问服务器IP并点击连接
                     </TextBlock>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -47,9 +47,9 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="HostIP" Text="beatsaber.networkauditor.org:10156" materialDesign:HintAssist.Hint="Host IP:Port" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="20,0" VerticalAlignment="Center"/>
-                        <TextBox x:Name="Username" Grid.Column="1" materialDesign:HintAssist.Hint="Username" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="20,0" VerticalAlignment="Center"/>
-                        <Button Content="Connect" Grid.Column="2" Height="38" Margin="10,0" VerticalAlignment="Center" Click="Connect_Click"/>
+                        <TextBox x:Name="HostIP" Text="bsc.tournament.beatsaberchina.com:10156" materialDesign:HintAssist.Hint="服务器IP:端口号" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="20,0" VerticalAlignment="Center"/>
+                        <TextBox x:Name="Username" Grid.Column="1" materialDesign:HintAssist.Hint="用户名" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="20,0" VerticalAlignment="Center"/>
+                        <Button Content="连接" Grid.Column="2" Height="38" Margin="10,0" VerticalAlignment="Center" Click="Connect_Click"/>
                     </Grid>
                 </Grid>
             </materialDesign:Card>
@@ -58,7 +58,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="Password" Grid.Column="0" materialDesign:HintAssist.Hint="Password (optional)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="Password" Grid.Column="0" materialDesign:HintAssist.Hint="密码(选填)" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center"/>
                 </Grid>
             </materialDesign:Card>
         </Grid>

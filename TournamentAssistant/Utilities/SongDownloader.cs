@@ -14,7 +14,7 @@ namespace TournamentAssistant.Utilities
 {
     public class SongDownloader
     {
-        private static string beatSaverDownloadUrl = "https://beatsaver.com/api/download/hash/";
+        private static string beatSaverDownloadUrl = "https://beatsaver.beatsaberchina.com/api/download/hash/";
 
         public static void DownloadSong(string levelId, bool refreshWhenDownloaded = true, Action<string, bool> songDownloaded = null, Action<string, float> downloadProgressChanged = null, string customHostUrl = null)
         {

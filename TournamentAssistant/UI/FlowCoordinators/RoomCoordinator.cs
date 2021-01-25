@@ -45,7 +45,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
             if (firstActivation)
             {
                 //Set up UI
-                SetTitle("Game Room", ViewController.AnimationType.None);
+                SetTitle("比赛", ViewController.AnimationType.None);
 
                 showBackButton = true;
 
@@ -72,7 +72,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 TournamentMode = Match == null;
                 if (TournamentMode)
                 {
-                    _splashScreen.StatusText = $"Connecting to \"{Host.Name}\"...";
+                    _splashScreen.StatusText = $"正在连接服务器 \"{Host.Name}\"...";
                     ProvideInitialViewControllers(_splashScreen);
                 }
                 else
@@ -83,7 +83,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                     isHost = Match.Leader == Plugin.client.Self;
                     _songSelection.SetSongs(SongUtils.masterLevelList);
                     _playerList.Players = Match.Players;
-                    _splashScreen.StatusText = "Waiting for the host to select a song...";
+                    _splashScreen.StatusText = "请等待房主选择歌曲...";
 
                     if (isHost)
                     {
@@ -119,7 +119,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
-                _splashScreen.StatusText = "Waiting for the coordinator to create your match...";
+                _splashScreen.StatusText = "请等待协调员创建比赛...";
 
                 if ((response.Self as Player).Team.Id == Guid.Empty && Plugin.client.State.ServerSettings.EnableTeams)
                 {
@@ -137,7 +137,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
-                _splashScreen.StatusText = !string.IsNullOrEmpty(response?.Message) ? response.Message : "Failed initial connection attempt, trying again...";
+                _splashScreen.StatusText = !string.IsNullOrEmpty(response?.Message) ? response.Message : "初始化服务器连接失败，请重试...";
             });
         }
 
@@ -191,7 +191,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                     if (!backButton.interactable) backButton.interactable = true;
                 }
 
-                _splashScreen.StatusText = "Waiting for the coordinator to create your match...";
+                _splashScreen.StatusText = "请等待协调员创建比赛...";
             }
         }
 
@@ -329,7 +329,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                     var screenSystem = this.GetField<ScreenSystem>("_screenSystem", typeof(FlowCoordinator));
                     screenSystem.GetField<Button>("_backButton").interactable = false;
 
-                    _splashScreen.StatusText = "Match has been created. Waiting for coordinator to select a song.";
+                    _splashScreen.StatusText = "比赛已创建。请等候协调员选择歌曲...";
                 });
             }
         }

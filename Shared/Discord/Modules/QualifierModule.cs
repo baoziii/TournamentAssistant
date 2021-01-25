@@ -47,26 +47,26 @@ namespace TournamentAssistantShared.Discord.Modules
             return FindSong(songPool, levelId, characteristic, beatmapDifficulty, gameOptions, playerOptions) != null;
         }
 
-        [Command("createEvent")]
-        [Summary("Create a Qualifier event for your guild")]
+        [Command("创建比赛")]
+        [Summary("在服务器中创建预选赛")]
         [RequireContext(ContextType.Guild)]
         public async Task CreateEventAsync([Remainder] string paramString)
         {
             if (IsAdmin())
             {
-                var name = paramString.ParseArgs("name");
-                var hostServer = paramString.ParseArgs("host");
+                var name = paramString.ParseArgs("名称");
+                var hostServer = paramString.ParseArgs("服务器");
                 
                 if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(hostServer))
                 {
-                    await ReplyAsync(embed: "Usage: `createEvent -name \"Event Name\" -host \"[host address]:[port]\"`\nTo find available hosts, please run `listHosts`\nYou can also set your desired event settings here. For example, add `-hidescorefromplayers` to the command!".ErrorEmbed());
+                    await ReplyAsync(embed: "用法: `创建比赛 -名称 \"Event Name\" -服务器 \"[服务器地址]:[端口号]\"`\n想要找到可用的服务器使用 `列出服务器` 指令\n你也可以提前加上设置项。比如在命令里添加`-对选手隐藏得分`".ErrorEmbed());
                 }
                 else
                 {
                     var server = ServerService.GetServer();
                     if (server == null)
                     {
-                        await ReplyAsync(embed: "The Server is not running, so we can't can't add events to it".ErrorEmbed());
+                        await ReplyAsync(embed: "服务器不在线，所以不能创建比赛".ErrorEmbed());
                     }
                     else
                     {
@@ -99,7 +99,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     }
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("setScoreChannel")]
@@ -150,7 +150,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     }
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("addSong")]
@@ -377,7 +377,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     }
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("listSongs")]
@@ -588,7 +588,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     }
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("listEvents")]
@@ -620,7 +620,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     await ReplyAsync(embed: builder.Build());
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("listHosts")]
@@ -649,7 +649,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     await ReplyAsync(embed: builder.Build());
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
 
         [Command("leaderboards")]
@@ -693,7 +693,7 @@ namespace TournamentAssistantShared.Discord.Modules
                     await ReplyAsync(embed: builder.Build());
                 }
             }
-            else await ReplyAsync(embed: "You do not have sufficient permissions to use this command".ErrorEmbed());
+            else await ReplyAsync(embed: "你没有足够的权限使用该命令".ErrorEmbed());
         }
     }
 }

@@ -18,11 +18,11 @@ namespace TournamentAssistant.UI.FlowCoordinators
             if (addedToHierarchy)
             {
                 //Set up UI
-                SetTitle("Server Selection", ViewController.AnimationType.None);
+                SetTitle("服务器列表", ViewController.AnimationType.None);
                 showBackButton = false;
 
                 _splashScreen = BeatSaberUI.CreateViewController<SplashScreen>();
-                _splashScreen.StatusText = "Gathering Server List...";
+                _splashScreen.StatusText = "正在获取服务器列表...";
 
                 ProvideInitialViewControllers(_splashScreen);
             }
@@ -69,7 +69,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
         private void UpdateScrapeCount(int count, int total)
         {
-            _splashScreen.StatusText = $"Gathering Data ({count} / {total})...";
+            _splashScreen.StatusText = $"正在获取数据 ({count} / {total})...";
         }
     }
 }

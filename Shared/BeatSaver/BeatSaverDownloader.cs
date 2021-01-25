@@ -11,7 +11,7 @@ namespace TournamentAssistantShared.BeatSaver
 {
     class BeatSaverDownloader
     {
-        private static string beatSaverUrl = "https://beatsaver.com";
+        private static string beatSaverUrl = "https://beatsaver.beatsaberchina.com";
         private static string beatSaverDownloadByHashUrl = $"{beatSaverUrl}/api/download/hash/";
         private static string beatSaverDownloadByKeyUrl = $"{beatSaverUrl}/api/download/key/";
 

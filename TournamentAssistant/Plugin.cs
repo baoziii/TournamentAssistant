@@ -132,7 +132,7 @@ namespace TournamentAssistant
 
         private void CreateMenuButton()
         {
-            MenuButtons.instance.RegisterButton(new MenuButton("TournamentAssistant", MenuButtonPressed));
+            MenuButtons.instance.RegisterButton(new MenuButton("比赛助手", MenuButtonPressed));
         }
 
         private void MenuButtonPressed()

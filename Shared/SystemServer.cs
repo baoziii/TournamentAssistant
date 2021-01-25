@@ -815,7 +815,7 @@ namespace TournamentAssistantShared
                 return result?.SpecificPacket as Response ?? new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "The request to the designated server timed out. The server is offline or otherwise unreachable"
+                    Message = "目标服务器超时。请检查服务器是否离线或无法访问"
                 };
             }
         }
@@ -836,7 +836,7 @@ namespace TournamentAssistantShared
                 return result?.SpecificPacket as Response ?? new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "The request to the designated server timed out. The server is offline or otherwise unreachable"
+                    Message = "目标服务器超时。请检查服务器是否离线或无法访问"
                 };
             }
         }
@@ -857,7 +857,7 @@ namespace TournamentAssistantShared
                 return result?.SpecificPacket as Response ?? new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "The request to the designated server timed out. The server is offline or otherwise unreachable"
+                    Message = "目标服务器超时。请检查服务器是否离线或无法访问"
                 };
             }
         }
@@ -869,7 +869,7 @@ namespace TournamentAssistantShared
                 return new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "There is already an event running for your guild"
+                    Message = "该服务器已存在一个正在进行的赛事"
                 };
             }
 
@@ -894,7 +894,7 @@ namespace TournamentAssistantShared
             return new Response
             {
                 Type = ResponseType.Success,
-                Message = $"Successfully created event: {databaseEvent.Name} with settings: {(QualifierEvent.EventSettings)databaseEvent.Flags}"
+                Message = $"成功创建赛事: {databaseEvent.Name} 使用如下设置: {(QualifierEvent.EventSettings)databaseEvent.Flags}"
             };
         }
 
@@ -905,7 +905,7 @@ namespace TournamentAssistantShared
                 return new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "There is not an event running for your guild"
+                    Message = "该服务器没有正在进行的赛事"
                 };
             }
 
@@ -971,7 +971,7 @@ namespace TournamentAssistantShared
             return new Response
             {
                 Type = ResponseType.Success,
-                Message = $"Successfully updated event: {newDatabaseEvent.Name}"
+                Message = $"成功更新赛事: {newDatabaseEvent.Name}"
             };
         }
 
@@ -982,7 +982,7 @@ namespace TournamentAssistantShared
                 return new Response
                 {
                     Type = ResponseType.Fail,
-                    Message = "There is not an event running for your guild"
+                    Message = "该服务器没有正在进行的赛事"
                 };
             }
 
@@ -1009,7 +1009,7 @@ namespace TournamentAssistantShared
             return new Response
             {
                 Type = ResponseType.Success,
-                Message = $"Successfully ended event: {qualifierEvent.Name}"
+                Message = $"成功结束赛事: {qualifierEvent.Name}"
             };
         }
 
@@ -1121,7 +1121,7 @@ namespace TournamentAssistantShared
                         Type = ResponseType.Fail,
                         Self = null,
                         State = null,
-                        Message = $"Version mismatch, this server is on version {SharedConstructs.Version}",
+                        Message = $"版本不匹配, 服务器版本 {SharedConstructs.Version}",
                         ServerVersion = VersionCode
                     }));
                 }
@@ -1143,7 +1143,7 @@ namespace TournamentAssistantShared
                         Type = ResponseType.Success,
                         Self = newPlayer,
                         State = State,
-                        Message = $"Connected to {settings.ServerName}!",
+                        Message = $"已连接至 {settings.ServerName}!",
                         ServerVersion = VersionCode
                     }));
                 }
@@ -1164,7 +1164,7 @@ namespace TournamentAssistantShared
                             Type = ResponseType.Success,
                             Self = coordinator,
                             State = State,
-                            Message = $"Connected to {settings.ServerName}!",
+                            Message = $"已连接至 {settings.ServerName}!",
                             ServerVersion = VersionCode
                         }));
                     }
@@ -1174,7 +1174,7 @@ namespace TournamentAssistantShared
                         {
                             Type = ResponseType.Fail,
                             State = State,
-                            Message = $"Incorrect password for {settings.ServerName}!",
+                            Message = $"{settings.ServerName} 的密码不正确!",
                             ServerVersion = VersionCode
                         }));
                     }
@@ -1187,7 +1187,7 @@ namespace TournamentAssistantShared
                         Type = ResponseType.Success,
                         Self = null,
                         State = State,
-                        Message = $"Connected to {settings.ServerName} (scraper)!",
+                        Message = $"已连接至 {settings.ServerName} (爬虫)!",
                         ServerVersion = VersionCode
                     }));
                 }
@@ -1423,7 +1423,7 @@ namespace TournamentAssistantShared
                             Type = ResponseType.Success,
                             Self = coordinator,
                             State = State,
-                            Message = $"Connected to {settings.ServerName}!",
+                            Message = $"已连接至 {settings.ServerName}!",
                             ServerVersion = VersionCode
                         }));
                     }
@@ -1433,7 +1433,7 @@ namespace TournamentAssistantShared
                         {
                             Type = ResponseType.Fail,
                             State = State,
-                            Message = $"Incorrect password for {settings.ServerName}!",
+                            Message = $"{settings.ServerName} 的密码不正确!",
                             ServerVersion = VersionCode
                         }));
                     }
@@ -1618,7 +1618,7 @@ namespace TournamentAssistantShared
                         RemoveHost(@event.ChangedObject as CoreServer);
                         break;
                     default:
-                        Logger.Error($"Unknown command received from {player.id}!");
+                        Logger.Error($"从玩家 {player.id} 收到未知命令!");
                         break;
                 }
             }

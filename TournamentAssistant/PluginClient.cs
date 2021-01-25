@@ -170,7 +170,7 @@ namespace TournamentAssistant
                         playerUpdate.ChangedObject = Self;
                         Send(new Packet(playerUpdate));
 
-                        SongDownloader.DownloadSong(loadSong.LevelId, songDownloaded: loadSongAction, downloadProgressChanged: (hash, progress) => Logger.Debug($"DOWNLOAD PROGRESS ({hash}): {progress}"), customHostUrl: loadSong.CustomHostUrl);
+                        SongDownloader.DownloadSong(loadSong.LevelId, songDownloaded: loadSongAction, downloadProgressChanged: (hash, progress) => Logger.Debug($"下载进度 ({hash}): {progress}"), customHostUrl: loadSong.CustomHostUrl);
                     }
                 }
             }

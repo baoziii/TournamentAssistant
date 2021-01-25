@@ -34,7 +34,7 @@ namespace TournamentAssistantShared.Discord
             _client.Log += LogAsync;
 
             if (_botToken == null) _botToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
-            if (_botToken == null) throw new ArgumentException("You must pass in a bot token, by setting it in the config, setting it as an environment variable, or passing it in as a command parameter");
+            if (_botToken == null) throw new ArgumentException("你必须输入机器人令牌，无论是从config文件设置，环境变量或者命令行参数都可以");
 
             await _client.LoginAsync(TokenType.Bot, _botToken);
             await _client.StartAsync();
