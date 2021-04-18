@@ -4,7 +4,7 @@
   <stack id="level-details-rect">
     <raw-image id="level-cover-image" ignore-layout="true" size-delta-x="110" size-delta-y="110"/>
     <vertical>
-      <text id="song-name-text" text="!NOT SET!" align="Center" font-size="7"/>
+      <text id="song-name-text" text="!未知!" align="Center" font-size="7"/>
       <horizontal spacing="2">
         <vertical>
           <img src="#ClockIcon" preserve-aspect="true"  pref-width="4" pref-height="4"/>

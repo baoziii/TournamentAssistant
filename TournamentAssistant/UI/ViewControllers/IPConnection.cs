@@ -40,7 +40,7 @@ namespace TournamentAssistant.UI.ViewControllers
         {
             CoreServer server = new()
             {
-                Name = "Custom server",
+                Name = "自定义服务器",
                 Address = ip,
                 Port = Int32.Parse(port)
             };

@@ -44,8 +44,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameDirPath)\Plugins\BS_Utils.dll</HintPath>
     </Reference>
-    <Reference Include="Colors">
+	<Reference Include="Colors">
       <HintPath>$(GameDirPath)\Beat Saber_Data\Managed\Colors.dll</HintPath>
+    </Reference>
+    <Reference Include="CustomNotes">
+      <HintPath>$(GameDirPath)\Plugins\CustomNotes.dll</HintPath>
     </Reference>
     <Reference Include="GameplayCore">
       <HintPath>$(GameDirPath)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
