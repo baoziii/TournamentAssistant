@@ -116,6 +116,10 @@
                                                     <RowDefinition/>
                                                     <RowDefinition/>
                                                     <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
                                                 </Grid.RowDefinitions>
                                                 <CheckBox x:Name="NoFailBox" Margin="8, 0">不会失败(No Fail)</CheckBox>
                                                 <CheckBox x:Name="GhostNotesBox" Grid.Row="1" Margin="8, 0">幽灵方块(Ghost Notes)</CheckBox>
@@ -124,11 +128,15 @@
                                                 <CheckBox x:Name="NoWallsBox" Grid.Row="4" Margin="8, 0">没有墙壁(No Walls)</CheckBox>
                                                 <CheckBox x:Name="NoArrowsBox" Grid.Row="5" Margin="8, 0">没有箭头(No Arrows)</CheckBox>
                                                 <CheckBox x:Name="FastSongBox" Grid.Row="6" Margin="8, 0">歌曲加速(Fast Song)</CheckBox>
-                                                <CheckBox x:Name="FastNotesBox" Grid.Row="7" Margin="8, 0">超速方块(Fast Notes)</CheckBox>
-                                                <CheckBox x:Name="SlowSongBox" Grid.Row="8" Margin="8, 0">歌曲减速(Slow Song)</CheckBox>
-                                                <CheckBox x:Name="InstaFailBox" Grid.Row="9" Margin="8, 0">瞬间失败(Insta Fail)</CheckBox>
-                                                <CheckBox x:Name="FailOnSaberClashBox" Grid.Row="10" Margin="8, 0">光剑相碰失败(Fail On Saber Clash)</CheckBox>
-                                                <CheckBox x:Name="BatteryEnergyBox" Grid.Row="11" Margin="8, 0">电池能量(Battery Energy)</CheckBox>
+                                                <CheckBox x:Name="SuperFastSongBox" Grid.Row="7" Margin="8, 0">歌曲超加速(Super Fast Song)</CheckBox>
+                                                <CheckBox x:Name="FastNotesBox" Grid.Row="8" Margin="8, 0">超速方块(Fast Notes)</CheckBox>
+                                                <CheckBox x:Name="SlowSongBox" Grid.Row="9" Margin="8, 0">歌曲减速(Slow Song)</CheckBox>
+                                                <CheckBox x:Name="InstaFailBox" Grid.Row="10" Margin="8, 0">瞬间失败(Insta Fail)</CheckBox>
+                                                <CheckBox x:Name="FailOnSaberClashBox" Grid.Row="11" Margin="8, 0">光剑相碰失败(Fail On Saber Clash)</CheckBox>
+                                                <CheckBox x:Name="BatteryEnergyBox" Grid.Row="12" Margin="8, 0">4次失误(Battery Energy)</CheckBox>
+                                                <CheckBox x:Name="ProModeBox" Grid.Row="13" Margin="8, 0">专业模式(Pro Mode)</CheckBox>
+                                                <CheckBox x:Name="ZenModeBox" Grid.Row="14" Margin="8, 0">禅模式(Zen Mode)</CheckBox>
+                                                <CheckBox x:Name="SmallCubesBox" Grid.Row="15" Margin="8, 0">变小方块(Small Cubes)</CheckBox>
                                             </Grid>
                                             <Grid Grid.Column="1">
                                                 <Grid.RowDefinitions>
@@ -142,7 +150,7 @@
                                                 <CheckBox Grid.Row="1" x:Name="DisablePauseBox" Margin="8, 0" IsChecked="True">禁用暂停</CheckBox>
                                                 <CheckBox Grid.Row="2" x:Name="DisableFailBox" Margin="8, 0" IsChecked="True">禁用失败</CheckBox>
                                                 <CheckBox Grid.Row="3" x:Name="DisableScoresaberBox" Margin="8, 0">禁用Scoresaber分数提交</CheckBox>
-                                                <CheckBox Grid.Row="4" x:Name="ShowNormalNotesBox" Margin="8, 0" IsEnabled="False">直播时禁用自定义方块(Custom Notes)</CheckBox>
+                                                <CheckBox Grid.Row="4" x:Name="ShowNormalNotesBox" Margin="8, 0">直播时禁用自定义方块(Custom Notes)</CheckBox>
                                             </Grid>
                                         </Grid>
                                         <Grid Grid.Row="2">

@@ -56,6 +56,7 @@ namespace TournamentAssistantShared.Discord.Modules
             {
                 var name = paramString.ParseArgs("名称");
                 var hostServer = paramString.ParseArgs("服务器");
+                var notificationChannelId = paramString.ParseArgs("信息频道ID");
                 
                 if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(hostServer))
                 {
@@ -86,6 +87,7 @@ namespace TournamentAssistantShared.Discord.Modules
                             GuildId = Context.Guild.Id,
                             GuildName = Context.Guild.Name,
                             Name = name,
+                            InfoChannelId = ulong.Parse(notificationChannelId),
                             Flags = (int)settings
                         }));
                         if (response.Type == Response.ResponseType.Success)
@@ -447,7 +449,7 @@ namespace TournamentAssistantShared.Discord.Modules
         [Command("removeSong")]
         [Summary("Remove a song from the currently running event")]
         [RequireContext(ContextType.Guild)]
-        public async Task RemoveSongAsync(string songId, [Remainder] string paramString = null)
+        public async Task RemoveSongAsync([Remainder] string paramString = null)
         {
             if (IsAdmin())
             {
@@ -459,6 +461,7 @@ namespace TournamentAssistantShared.Discord.Modules
                 else
                 {
                     var eventId = paramString.ParseArgs("eventId");
+                    var songId = paramString.ParseArgs("song");
 
                     if (string.IsNullOrEmpty(eventId))
                     {

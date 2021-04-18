@@ -29,7 +29,13 @@ namespace TournamentAssistantShared.Models
             //1.12.2 Additions
             DemoNoFail = 4096,
             DemoNoObstacles = 8192,
-            StrictAngles = 16384
+            StrictAngles = 16384,
+
+            //1.13.4 Additions
+            ProMode = 32768,
+            ZenMode = 65536,
+            SmallCubes = 131072,
+            SuperFastSong = 262144
         }
 
         public GameOptions Options { get; set; }

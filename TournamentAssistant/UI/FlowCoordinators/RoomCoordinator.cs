@@ -1,19 +1,19 @@
-﻿using TournamentAssistant.Misc;
-using TournamentAssistant.UI.ViewControllers;
-using TournamentAssistant.Utilities;
-using TournamentAssistantShared;
-using TournamentAssistantShared.Models;
-using TournamentAssistantShared.Models.Packets;
-using BeatSaberMarkupLanguage;
+﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TournamentAssistant.Interop;
+using TournamentAssistant.Misc;
+using TournamentAssistant.UI.ViewControllers;
+using TournamentAssistant.Utilities;
+using TournamentAssistantShared;
+using TournamentAssistantShared.Models;
+using TournamentAssistantShared.Models.Packets;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = TournamentAssistantShared.Logger;
-using TournamentAssistant.Interop;
 
 namespace TournamentAssistant.UI.FlowCoordinators
 {
@@ -57,13 +57,13 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 _defaultLights = _soloFreePlayFlowCoordinator.GetField<MenuLightsPresetSO>("_defaultLightsPreset");
 
                 _songSelection = BeatSaberUI.CreateViewController<SongSelection>();
-                _songSelection.SongSelected += songSelection_SongSelected;
+                _songSelection.SongSelected += SongSelection_SongSelected;
 
                 _splashScreen = BeatSaberUI.CreateViewController<SplashScreen>();
 
                 _songDetail = BeatSaberUI.CreateViewController<SongDetail>();
-                _songDetail.PlayPressed += songDetail_didPressPlayButtonEvent;
-                _songDetail.DifficultyBeatmapChanged += songDetail_didChangeDifficultyBeatmapEvent;
+                _songDetail.PlayPressed += SongDetail_didPressPlayButtonEvent;
+                _songDetail.DifficultyBeatmapChanged += SongDetail_didChangeDifficultyBeatmapEvent;
 
                 _playerList = BeatSaberUI.CreateViewController<PlayerList>();
             }
@@ -124,7 +124,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 if ((response.Self as Player).Team.Id == Guid.Empty && Plugin.client.State.ServerSettings.EnableTeams)
                 {
                     _teamSelection = BeatSaberUI.CreateViewController<TeamSelection>();
-                    _teamSelection.TeamSelected += teamSelection_TeamSelected;
+                    _teamSelection.TeamSelected += TeamSelection_TeamSelected;
                     _teamSelection.SetTeams(new List<Team>(Plugin.client.State.ServerSettings.Teams));
                     ShowTeamSelection();
                 }
@@ -195,20 +195,22 @@ namespace TournamentAssistant.UI.FlowCoordinators
             }
         }
 
-        private void teamSelection_TeamSelected(Team team)
+        private void TeamSelection_TeamSelected(Team team)
         {
             (Plugin.client.Self as Player).Team = team;
 
-            var playerUpdate = new Event();
-            playerUpdate.Type = Event.EventType.PlayerUpdated;
-            playerUpdate.ChangedObject = Plugin.client.Self;
+            var playerUpdate = new Event
+            {
+                Type = Event.EventType.PlayerUpdated,
+                ChangedObject = Plugin.client.Self
+            };
             Plugin.client.Send(new Packet(playerUpdate));
 
             Destroy(_teamSelection.screen.gameObject);
         }
 
-        private void songSelection_SongSelected(GameplayParameters parameters) => songSelection_SongSelected(parameters.Beatmap.LevelId);
-        private void songSelection_SongSelected(string levelId)
+        private void SongSelection_SongSelected(GameplayParameters parameters) => SongSelection_SongSelected(parameters.Beatmap.LevelId);
+        private void SongSelection_SongSelected(string levelId)
         {
             //Load the song, then display the detail info
             SongUtils.LoadSong(levelId, (loadedLevel) =>
@@ -236,15 +238,19 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 //Tell the other players to download the song, if we're host
                 if (isHost)
                 {
-                    var loadSong = new LoadSong();
-                    loadSong.LevelId = loadedLevel.levelID;
+                    var loadSong = new LoadSong
+                    {
+                        LevelId = loadedLevel.levelID
+                    };
 
                     //Send updated download status
                     (Plugin.client.Self as Player).DownloadState = Player.DownloadStates.Downloaded;
 
-                    var playerUpdate = new Event();
-                    playerUpdate.Type = Event.EventType.PlayerUpdated;
-                    playerUpdate.ChangedObject = Plugin.client.Self;
+                    var playerUpdate = new Event
+                    {
+                        Type = Event.EventType.PlayerUpdated,
+                        ChangedObject = Plugin.client.Self
+                    };
                     Plugin.client.Send(new Packet(playerUpdate));
 
                     //We don't want to recieve this since it would cause an infinite song loading loop.
@@ -254,7 +260,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
             });
         }
 
-        private void songDetail_didChangeDifficultyBeatmapEvent(IDifficultyBeatmap beatmap)
+        private void SongDetail_didChangeDifficultyBeatmapEvent(IDifficultyBeatmap beatmap)
         {
             var level = beatmap.level;
 
@@ -265,7 +271,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 Name = level.songName
             };
 
-            List<Characteristic> characteristics = new List<Characteristic>();
+            List<Characteristic> characteristics = new();
             foreach (var beatmapSet in level.previewDifficultyBeatmapSets)
             {
                 characteristics.Add(new Characteristic()
@@ -285,11 +291,13 @@ namespace TournamentAssistant.UI.FlowCoordinators
             }
         }
 
-        private void songDetail_didPressPlayButtonEvent(IBeatmapLevel _, BeatmapCharacteristicSO characteristic, BeatmapDifficulty difficulty)
+        private void SongDetail_didPressPlayButtonEvent(IBeatmapLevel _, BeatmapCharacteristicSO characteristic, BeatmapDifficulty difficulty)
         {
             var playSong = new PlaySong();
-            var gameplayParameters = new GameplayParameters();
-            gameplayParameters.Beatmap = new Beatmap();
+            var gameplayParameters = new GameplayParameters
+            {
+                Beatmap = new Beatmap()
+            };
             gameplayParameters.Beatmap.Characteristic = Match.SelectedLevel.Characteristics.First(x => x.SerializedName == characteristic.serializedName);
             gameplayParameters.Beatmap.Difficulty = (SharedConstructs.BeatmapDifficulty)difficulty;
             gameplayParameters.Beatmap.LevelId = Match.SelectedLevel.LevelId;
@@ -396,35 +404,37 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 UnityMainThreadDispatcher.Instance().Enqueue(() =>
                 {
                     //If the player is still on the results screen, go ahead and boot them out
-                    if (_resultsViewController.isInViewControllerHierarchy) resultsViewController_continueButtonPressedEvent(null);
+                    if (_resultsViewController.isInViewControllerHierarchy) ResultsViewController_continueButtonPressedEvent(null);
 
-                    songSelection_SongSelected(level.levelID);
+                    SongSelection_SongSelected(level.levelID);
                 });
             }
         }
 
-        protected override void Client_PlaySong(IPreviewBeatmapLevel desiredLevel, BeatmapCharacteristicSO desiredCharacteristic, BeatmapDifficulty desiredDifficulty, GameplayModifiers gameplayModifiers, PlayerSpecificSettings playerSpecificSettings, OverrideEnvironmentSettings overrideEnvironmentSettings, ColorScheme colorScheme, bool useFloatingScoreboard = false, bool useSync = false, bool disablePause = false, bool disableFail = false)
+        protected override void Client_PlaySong(IPreviewBeatmapLevel desiredLevel, BeatmapCharacteristicSO desiredCharacteristic, BeatmapDifficulty desiredDifficulty, GameplayModifiers gameplayModifiers, PlayerSpecificSettings playerSpecificSettings, OverrideEnvironmentSettings overrideEnvironmentSettings, ColorScheme colorScheme, bool useFloatingScoreboard = false, bool useSync = false, bool disableFail = false, bool disablePause = false)
         {
-            base.Client_PlaySong(desiredLevel, desiredCharacteristic, desiredDifficulty, gameplayModifiers, playerSpecificSettings, overrideEnvironmentSettings, colorScheme, useFloatingScoreboard, useSync, disablePause, disableFail);
+            base.Client_PlaySong(desiredLevel, desiredCharacteristic, desiredDifficulty, gameplayModifiers, playerSpecificSettings, overrideEnvironmentSettings, colorScheme, useFloatingScoreboard, useSync, disableFail, disablePause);
 
             //Set up per-play settings
             Plugin.UseSync = useSync;
             Plugin.UseFloatingScoreboard = useFloatingScoreboard;
-            Plugin.DisablePause = disablePause;
             Plugin.DisableFail = disableFail;
+            Plugin.DisablePause = disablePause;
 
             //Reset score
             (Plugin.client.Self as Player).Score = 0;
             (Plugin.client.Self as Player).Accuracy = 0;
-            var playerUpdate = new Event();
-            playerUpdate.Type = Event.EventType.PlayerUpdated;
-            playerUpdate.ChangedObject = Plugin.client.Self;
+            var playerUpdate = new Event
+            {
+                Type = Event.EventType.PlayerUpdated,
+                ChangedObject = Plugin.client.Self
+            };
             Plugin.client.Send(new Packet(playerUpdate));
 
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 //If the player is still on the results screen, go ahead and boot them out
-                if (_resultsViewController.isInViewControllerHierarchy) resultsViewController_continueButtonPressedEvent(null);
+                if (_resultsViewController.isInViewControllerHierarchy) ResultsViewController_continueButtonPressedEvent(null);
 
                 SongUtils.PlaySong(desiredLevel, desiredCharacteristic, desiredDifficulty, overrideEnvironmentSettings, colorScheme, gameplayModifiers, playerSpecificSettings, SongFinished);
             });
@@ -458,10 +468,12 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
                 songFinished.User = Plugin.client.Self as Player;
 
-                songFinished.Beatmap = new Beatmap();
-                songFinished.Beatmap.LevelId = map.level.levelID;
-                songFinished.Beatmap.Difficulty = (SharedConstructs.BeatmapDifficulty)map.difficulty;
-                songFinished.Beatmap.Characteristic = new Characteristic();
+                songFinished.Beatmap = new Beatmap
+                {
+                    LevelId = map.level.levelID,
+                    Difficulty = (SharedConstructs.BeatmapDifficulty)map.difficulty,
+                    Characteristic = new Characteristic()
+                };
                 songFinished.Beatmap.Characteristic.SerializedName = map.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName;
                 songFinished.Beatmap.Characteristic.Difficulties = map.parentDifficultyBeatmapSet.difficultyBeatmaps.Select(x => (SharedConstructs.BeatmapDifficulty)x.difficulty).ToArray();
 
@@ -475,7 +487,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 _menuLightsManager.SetColorPreset(_scoreLights, true);
                 _resultsViewController.Init(results, map, false, highScore);
                 _resultsViewController.GetField<Button>("_restartButton").gameObject.SetActive(false);
-                _resultsViewController.continueButtonPressedEvent += resultsViewController_continueButtonPressedEvent;
+                _resultsViewController.continueButtonPressedEvent += ResultsViewController_continueButtonPressedEvent;
                 PresentViewController(_resultsViewController, immediately: true);
             }
             else if (ShouldDismissOnReturnToMenu) Dismiss();
@@ -486,9 +498,9 @@ namespace TournamentAssistant.UI.FlowCoordinators
             }
         }
 
-        private void resultsViewController_continueButtonPressedEvent(ResultsViewController _)
+        private void ResultsViewController_continueButtonPressedEvent(ResultsViewController _)
         {
-            _resultsViewController.continueButtonPressedEvent -= resultsViewController_continueButtonPressedEvent;
+            _resultsViewController.continueButtonPressedEvent -= ResultsViewController_continueButtonPressedEvent;
             _resultsViewController.GetField<Button>("_restartButton").gameObject.SetActive(true);
             _menuLightsManager.SetColorPreset(_defaultLights, true);
             DismissViewController(_resultsViewController);
@@ -504,7 +516,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
         //Broken off so that if custom notes isn't installed, we don't try to load anything from it
         private static void DisableHMDOnly()
         {
-            //CustomNotesInterop.DisableHMDOnly();
+            CustomNotesInterop.DisableHMDOnly();
         }
     }
 }

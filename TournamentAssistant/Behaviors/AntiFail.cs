@@ -71,7 +71,7 @@ namespace TournamentAssistant.Behaviors
 
             //Unhook the functions in the energy counter that watch note events, so we can peek inside the process
             beatmapObjectManager = gameEnergyCounter.GetField<BeatmapObjectManager>("_beatmapObjectManager");
-            
+
             beatmapObjectManager.noteWasMissedEvent -= gameEnergyCounter.HandleNoteWasMissed;
             beatmapObjectManager.noteWasMissedEvent += beatmapObjectManager_noteWasMissedEvent;
 
@@ -83,7 +83,7 @@ namespace TournamentAssistant.Behaviors
             gameSongController.songDidFinishEvent += gameSongController_songDidFinishEvent;
         }
 
-        private void beatmapObjectManager_noteWasCutEvent(NoteController noteController, NoteCutInfo noteCutInfo)
+        private void beatmapObjectManager_noteWasCutEvent(NoteController noteController, in NoteCutInfo noteCutInfo)
         {
             if (noteController.noteData.colorType == ColorType.None)
             {

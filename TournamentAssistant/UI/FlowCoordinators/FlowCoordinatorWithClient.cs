@@ -7,6 +7,7 @@ using TournamentAssistant.UI.ViewControllers;
 using TournamentAssistant.Utilities;
 using TournamentAssistantShared.Models;
 using TournamentAssistantShared.Models.Packets;
+using UnityEngine;
 
 namespace TournamentAssistant.UI.FlowCoordinators
 {
@@ -22,6 +23,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
         private bool _didAttemptConnectionYet;
         private bool _didCreateClient;
         private OngoingGameList _ongoingGameList;
+        private GameplaySetupViewController _gameplaySetupViewController;
 
         protected virtual void OnUserDataResolved(string username, ulong userId)
         {
@@ -49,6 +51,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
                 _didAttemptConnectionYet = false;
 
                 _ongoingGameList = BeatSaberUI.CreateViewController<OngoingGameList>();
+                _gameplaySetupViewController = Resources.FindObjectsOfTypeAll<GameplaySetupViewController>().First();
             }
         }
 
@@ -83,7 +86,11 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
         public virtual void Dismiss()
         {
-            if (_ongoingGameList.isInViewControllerHierarchy) SetLeftScreenViewController(null, ViewController.AnimationType.None);
+            if (_ongoingGameList.isInViewControllerHierarchy)
+            {
+                SetLeftScreenViewController(null, ViewController.AnimationType.None);
+                SetRightScreenViewController(null, ViewController.AnimationType.None);
+            }
             RaiseDidFinishEvent();
         }
 
@@ -103,9 +110,11 @@ namespace TournamentAssistant.UI.FlowCoordinators
             Plugin.client.UpdatePlayer(Plugin.client.Self as Player);
 
             //Needs to run on main thread
-            UnityMainThreadDispatcher.Instance().Enqueue(() => {
-                SetLeftScreenViewController(_ongoingGameList, ViewController.AnimationType.In);
-
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                _gameplaySetupViewController.Setup(false, true, true, GameplaySetupViewController.GameplayMode.SinglePlayer);
+                SetLeftScreenViewController(_gameplaySetupViewController, ViewController.AnimationType.In);
+                SetRightScreenViewController(_ongoingGameList, ViewController.AnimationType.In);
                 _ongoingGameList.ClearMatches();
                 _ongoingGameList.AddMatches(Plugin.client.State.Matches);
             });
@@ -113,12 +122,15 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
         protected virtual void Client_FailedToConnectToServer(ConnectResponse response)
         {
-            UnityMainThreadDispatcher.Instance().Enqueue(() => {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
                 SetLeftScreenViewController(null, ViewController.AnimationType.None);
+                SetRightScreenViewController(null, ViewController.AnimationType.None);
             });
         }
 
-        protected virtual void Client_ServerDisconnected() {
+        protected virtual void Client_ServerDisconnected()
+        {
             //There's no recourse but to boot the client out if the server disconnects
             //Only the coordinator that created the client should do this, it can handle
             //dismissing any of its children as well
@@ -133,7 +145,7 @@ namespace TournamentAssistant.UI.FlowCoordinators
 
         protected virtual void Client_LoadedSong(IBeatmapLevel level) { }
 
-        protected virtual void Client_PlaySong(IPreviewBeatmapLevel level, BeatmapCharacteristicSO characteristic, BeatmapDifficulty difficulty, GameplayModifiers gameOptions, PlayerSpecificSettings playerOptions, OverrideEnvironmentSettings environmentSettings, ColorScheme colors, bool floatingScoreboard, bool streamSync, bool disablePause, bool disableFail) { }
+        protected virtual void Client_PlaySong(IPreviewBeatmapLevel level, BeatmapCharacteristicSO characteristic, BeatmapDifficulty difficulty, GameplayModifiers gameOptions, PlayerSpecificSettings playerOptions, OverrideEnvironmentSettings environmentSettings, ColorScheme colors, bool floatingScoreboard, bool streamSync, bool disableFail, bool disablePause) { }
 
         protected virtual void Client_MatchCreated(Match match)
         {

@@ -12,7 +12,6 @@ using TournamentAssistantShared.Models;
 using TournamentAssistantShared.Models.Packets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Zenject;
 using Config = TournamentAssistantShared.Config;
 using Packet = TournamentAssistantShared.Packet;
 
@@ -37,8 +36,8 @@ namespace TournamentAssistant
 
         public static bool UseSync { get; set; }
         public static bool UseFloatingScoreboard { get; set; }
-        public static bool DisablePause { get; set; }
         public static bool DisableFail { get; set; }
+        public static bool DisablePause { get; set; }
         public static bool DisableScoresaberSubmission { get; set; }
 
         private MainFlowCoordinator _mainFlowCoordinator;
@@ -87,17 +86,17 @@ namespace TournamentAssistant
                         UseFloatingScoreboard = false;
                     }
 
+                    if (DisableFail)
+                    {
+                        new GameObject("AntiFail").AddComponent<AntiFail>();
+                        DisableFail = false;
+                    }
+
                     if (DisablePause) new GameObject("AntiPause").AddComponent<AntiPause>();
                     else if (UseSync) //DisablePause will invoke UseSync after it's done to ensure they don't interfere with each other
                     {
                         new GameObject("SyncHandler").AddComponent<SyncHandler>();
                         UseSync = false;
-                    }
-
-                    if (DisableFail)
-                    {
-                        new GameObject("AntiFail").AddComponent<AntiFail>();
-                        DisableFail = false;
                     }
 
                     (client.Self as Player).PlayState = Player.PlayStates.InGame;
@@ -116,7 +115,6 @@ namespace TournamentAssistant
                 if (SyncHandler.Instance != null) SyncHandler.Destroy();
                 if (ScoreMonitor.Instance != null) ScoreMonitor.Destroy();
                 if (FloatingScoreScreen.Instance != null) FloatingScoreScreen.Destroy();
-                if (AntiFail.Instance != null) AntiFail.Destroy();
                 if (DisablePause) DisablePause = false; //We can't disable this up above since SyncHandler might need to know info about its status
 
                 if (client != null && client.Connected)

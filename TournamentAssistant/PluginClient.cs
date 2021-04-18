@@ -20,7 +20,7 @@ namespace TournamentAssistant
         public event Action<IBeatmapLevel> LoadedSong;
         public event Action<IPreviewBeatmapLevel, BeatmapCharacteristicSO, BeatmapDifficulty, GameplayModifiers, PlayerSpecificSettings, OverrideEnvironmentSettings, ColorScheme, bool, bool, bool, bool> PlaySong;
 
-        public PluginClient(string endpoint, int port, string username, string userId, Connect.ConnectTypes connectType = Connect.ConnectTypes.Player) : base(endpoint, port, username, connectType, userId) {}
+        public PluginClient(string endpoint, int port, string username, string userId, Connect.ConnectTypes connectType = Connect.ConnectTypes.Player) : base(endpoint, port, username, connectType, userId) { }
 
         protected override void Client_PacketReceived(Packet packet)
         {
@@ -41,26 +41,28 @@ namespace TournamentAssistant
                 if (playSong.GameplayParameters.PlayerSettings.Options != PlayerOptions.None)
                 {
                     playerSettings = new PlayerSpecificSettings(
-                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.StaticLights),
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.LeftHanded),
                         playSong.GameplayParameters.PlayerSettings.PlayerHeight,
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.AutoPlayerHeight),
                         playSong.GameplayParameters.PlayerSettings.SfxVolume,
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.ReduceDebris),
-                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.NoHud),
-                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.NoFailEffects),
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.AdvancedHud),
+                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.NoFailEffects),
+                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.NoHud),
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.AutoRestart),
                         playSong.GameplayParameters.PlayerSettings.SaberTrailIntensity,
                         playSong.GameplayParameters.PlayerSettings.NoteJumpStartBeatOffset,
                         playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.HideNoteSpawnEffect),
-                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.AdaptiveSfx)
+                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.AdaptiveSfx),
+                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.StaticLights) ? EnvironmentEffectsFilterPreset.NoEffects : EnvironmentEffectsFilterPreset.AllEffects,
+                        playSong.GameplayParameters.PlayerSettings.Options.HasFlag(PlayerOptions.StaticLights) ? EnvironmentEffectsFilterPreset.NoEffects : EnvironmentEffectsFilterPreset.AllEffects
                     );
                 }
 
                 var songSpeed = GameplayModifiers.SongSpeed.Normal;
                 if (playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.SlowSong)) songSpeed = GameplayModifiers.SongSpeed.Slower;
                 if (playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.FastSong)) songSpeed = GameplayModifiers.SongSpeed.Faster;
+                if (playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.SuperFastSong)) songSpeed = GameplayModifiers.SongSpeed.SuperFast;
 
                 var gameplayModifiers = new GameplayModifiers(
                     playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.DemoNoFail),
@@ -76,7 +78,10 @@ namespace TournamentAssistant
                     playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.DisappearingArrows),
                     songSpeed,
                     playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.NoArrows),
-                    playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.GhostNotes)
+                    playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.GhostNotes),
+                    playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.ProMode),
+                    playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.ZenMode),
+                    playSong.GameplayParameters.GameplayModifiers.Options.HasFlag(GameOptions.SmallCubes)
                 );
 
                 var colorScheme = playerData.colorSchemesSettings.overrideDefaultColors ? playerData.colorSchemesSettings.GetSelectedColorScheme() : null;
@@ -92,7 +97,7 @@ namespace TournamentAssistant
                     }
                 }
 
-                PlaySong?.Invoke(desiredLevel, desiredCharacteristic, desiredDifficulty, gameplayModifiers, playerSettings, playerData.overrideEnvironmentSettings, colorScheme, playSong.FloatingScoreboard, playSong.StreamSync, playSong.DisablePause, playSong.DisableFail);
+                PlaySong?.Invoke(desiredLevel, desiredCharacteristic, desiredDifficulty, gameplayModifiers, playerSettings, playerData.overrideEnvironmentSettings, colorScheme, playSong.FloatingScoreboard, playSong.StreamSync, playSong.DisableFail, playSong.DisablePause);
             }
             else if (packet.Type == PacketType.Command)
             {
@@ -108,7 +113,8 @@ namespace TournamentAssistant
                 }
                 else if (command.CommandType == Command.CommandTypes.DelayTest_Finish)
                 {
-                    UnityMainThreadDispatcher.Instance().Enqueue(() => {
+                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
                         ScreenOverlay.Instance.Clear();
                         SyncHandler.Instance.Resume();
                         SyncHandler.Destroy();
@@ -200,7 +206,7 @@ namespace TournamentAssistant
         //Broken off so that if custom notes isn't installed, we don't try to load anything from it
         private static void EnableHMDOnly()
         {
-            //CustomNotesInterop.EnableHMDOnly();
+            CustomNotesInterop.EnableHMDOnly();
         }
     }
 }

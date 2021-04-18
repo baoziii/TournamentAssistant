@@ -1,9 +1,11 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -179,7 +181,7 @@ namespace TournamentAssistantUI.UI
             });
         }
 
-        private void Connection_PlayerFinishedSong(SongFinished results)
+        private async void Connection_PlayerFinishedSong(SongFinished results)
         {
             LogBlock.Dispatcher.Invoke(() => LogBlock.Inlines.Add(new Run($"{results.User.Name} has scored {results.Score}\n")));
 
@@ -192,6 +194,16 @@ namespace TournamentAssistantUI.UI
             {
                 AllPlayersFinishedSong?.Invoke();
             }
+            /*using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("user-agent", "TournamentAssistant");
+                System.IO.File.WriteAllText($"WC_QUALS_RESULTS_{results.User.UserId}_{results.Beatmap.LevelId}_{DateTime.Now.Ticks}.json", JsonConvert.SerializeObject(results));
+                List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
+                list.Add(new KeyValuePair<string, string>("score", results.Score.ToString()));
+                list.Add(new KeyValuePair<string, string>("userId", results.User.UserId.ToString()));
+                list.Add(new KeyValuePair<string, string>("map", results.Beatmap.LevelId));
+                await client.PostAsync("https://cube.community/api/ta_scores", new FormUrlEncodedContent(list));
+            }*/
         }
 
         private void Connection_PlayerInfoUpdated(Player player)
@@ -238,7 +250,7 @@ namespace TournamentAssistantUI.UI
             }
         }
 
-        private void LoadSong_Executed(object obj)
+        private async void LoadSong_Executed(object obj)
         {
             SongLoading = true;
 
@@ -336,59 +348,73 @@ namespace TournamentAssistantUI.UI
             else
             {
                 //If we're using a custom host, we don't need to find a new hash, we can just download it by id
-                var hash = BeatSaverDownloader.GetHashFromID(songId);
-                BeatSaverDownloader.DownloadSongInfoThreaded(hash,
-                    (successfulDownload) =>
-                    {
-                        SongLoading = false;
-                        LoadSongButtonProgress = 0;
-                        if (successfulDownload)
+                try
+                {
+                    var hash = BeatSaverDownloader.GetHashFromID(songId);
+                    BeatSaverDownloader.DownloadSongInfoThreaded(hash,
+                        (successfulDownload) =>
                         {
-                            var song = new DownloadedSong(hash);
-
-                            var mapFormattedLevelId = $"custom_level_{hash.ToUpper()}";
-
-                            var matchMap = new PreviewBeatmapLevel()
+                            SongLoading = false;
+                            LoadSongButtonProgress = 0;
+                            if (successfulDownload)
                             {
-                                LevelId = mapFormattedLevelId,
-                                Name = song.Name
-                            };
+                                var song = new DownloadedSong(hash);
 
-                            List<Characteristic> characteristics = new List<Characteristic>();
-                            foreach (var characteristic in song.Characteristics)
-                            {
-                                characteristics.Add(new Characteristic()
+                                var mapFormattedLevelId = $"custom_level_{hash.ToUpper()}";
+
+                                var matchMap = new PreviewBeatmapLevel()
                                 {
-                                    SerializedName = characteristic,
-                                    Difficulties = song.GetBeatmapDifficulties(characteristic)
-                                });
-                            }
-                            matchMap.Characteristics = characteristics.ToArray();
-                            Match.SelectedLevel = matchMap;
-                            Match.SelectedCharacteristic = null;
-                            Match.SelectedDifficulty = SharedConstructs.BeatmapDifficulty.Easy; //Easy, aka 0, aka null
+                                    LevelId = mapFormattedLevelId,
+                                    Name = song.Name
+                                };
+
+                                List<Characteristic> characteristics = new List<Characteristic>();
+                                foreach (var characteristic in song.Characteristics)
+                                {
+                                    characteristics.Add(new Characteristic()
+                                    {
+                                        SerializedName = characteristic,
+                                        Difficulties = song.GetBeatmapDifficulties(characteristic)
+                                    });
+                                }
+                                matchMap.Characteristics = characteristics.ToArray();
+                                Match.SelectedLevel = matchMap;
+                                Match.SelectedCharacteristic = null;
+                                Match.SelectedDifficulty = SharedConstructs.BeatmapDifficulty.Easy; //Easy, aka 0, aka null
 
                             //Notify all the UI that needs to be notified, and propegate the info across the network
                             Dispatcher.Invoke(() => NotifyPropertyChanged(nameof(Match)));
-                            MainPage.Connection.UpdateMatch(Match);
+                                MainPage.Connection.UpdateMatch(Match);
 
                             //Once we've downloaded it as the coordinator, we know it's a-ok for players to download too
                             var loadSong = new LoadSong();
-                            loadSong.LevelId = Match.SelectedLevel.LevelId;
-                            loadSong.CustomHostUrl = customHost;
-                            SendToPlayers(new Packet(loadSong));
-                        }
+                                loadSong.LevelId = Match.SelectedLevel.LevelId;
+                                loadSong.CustomHostUrl = customHost;
+                                SendToPlayers(new Packet(loadSong));
+                            }
 
                         //Due to my inability to use a custom converter to successfully use DataBinding to accomplish this same goal,
                         //we are left doing it this weird gross way
                         SongBox.Dispatcher.Invoke(() => SongBox.IsEnabled = true);
-                    },
-                    (progress) =>
+                        },
+                        (progress) =>
+                        {
+                            LoadSongButtonProgress = progress;
+                        },
+                        customHost
+                    );
+                }
+                catch (Exception e)
+                {
+                    SongLoading = false;
+
+                    var sampleMessageDialog = new SampleMessageDialog
                     {
-                        LoadSongButtonProgress = progress;
-                    },
-                    customHost
-                );
+                        Message = { Text = $"There was an error downloading the song:\n{e}" }
+                    };
+
+                    await DialogHost.Show(sampleMessageDialog, "RootDialog");
+                }
             }
         }
 
@@ -460,12 +486,16 @@ namespace TournamentAssistantUI.UI
             if ((bool)FastNotesBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.FastNotes;
             if ((bool)SlowSongBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.SlowSong;
             if ((bool)FastSongBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.FastSong;
+            if ((bool)SuperFastSongBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.SuperFastSong;
             if ((bool)InstaFailBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.InstaFail;
             if ((bool)FailOnSaberClashBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.FailOnClash;
             if ((bool)BatteryEnergyBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.BatteryEnergy;
             if ((bool)NoBombsBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.NoBombs;
             if ((bool)NoWallsBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.NoObstacles;
             if ((bool)NoArrowsBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.NoArrows;
+            if ((bool)ProModeBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.ProMode;
+            if ((bool)ZenModeBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.ZenMode;
+            if ((bool)SmallCubesBox.IsChecked) gm.Options = gm.Options | GameplayModifiers.GameOptions.SmallCubes;
 
             var playSong = new PlaySong();
             var gameplayParameters = new GameplayParameters();
@@ -481,8 +511,8 @@ namespace TournamentAssistantUI.UI
             playSong.GameplayParameters = gameplayParameters;
             playSong.FloatingScoreboard = (bool)ScoreboardBox.IsChecked;
             playSong.StreamSync = useSync;
-            playSong.DisablePause = (bool)DisablePauseBox.IsChecked;
             playSong.DisableFail = (bool)DisableFailBox.IsChecked;
+            playSong.DisablePause = (bool)DisablePauseBox.IsChecked;
             playSong.DisableScoresaberSubmission = (bool)DisableScoresaberBox.IsChecked;
             playSong.ShowNormalNotesOnStream = (bool)ShowNormalNotesBox.IsChecked;
 
@@ -843,7 +873,6 @@ namespace TournamentAssistantUI.UI
 
                         }, () =>
                         {
-                            //Logger.Debug($"{Match.Players[playerId].Name}'S GREEN DETECTED ({DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond})");
                             Match.Players[playerId].StreamDelayMs = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - Match.Players[playerId].StreamSyncStartMs;
                             
                             LogBlock.Dispatcher.Invoke(() => LogBlock.Inlines.Add(new Run($"DETECTED: {Match.Players[playerId].Name} (delay: {Match.Players[playerId].StreamDelayMs})\n") { Foreground = Brushes.YellowGreen })); ;
@@ -865,8 +894,6 @@ namespace TournamentAssistantUI.UI
                         Match.Players[i].StreamSyncStartMs = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                     }
 
-                    //Logger.Info($"INIT TIMES SET ({DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond})");
-
                     //Start watching pixels for color change
                     pixelReaders.ForEach(x => x.StartWatching());
 
@@ -875,7 +902,6 @@ namespace TournamentAssistantUI.UI
                     {
                         CommandType = Command.CommandTypes.ScreenOverlay_ShowPng
                     }));
-                    //Logger.Info($"SHOW COMMAND SENT ({DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond})");
                 }
                 else
                 {
