@@ -160,9 +160,10 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                                 <Button Content="开始" Command="{Binding PlaySong}" Margin="10,5"/>
-                                                <Button Content="开始 (同步)" Command="{Binding PlaySongWithSync}" Margin="10,5"/>
-                                                <Button Content="开始 (二维码同步)" Command="{Binding PlaySongWithQRSync}" Margin="10,5"/>
+                                                <!--<Button Content="开始 (同步)" Command="{Binding PlaySongWithSync}" Margin="10,5"/>
+                                                <Button Content="开始 (二维码同步)" Command="{Binding PlaySongWithQRSync}" Margin="10,5"/>-->
                                                 <Button Content="开始 (双重同步)" Command="{Binding PlaySongWithDualSync}" Margin="10,5"/>
+                                                <Button Content="开始 (延迟开始)" Command="{Binding PlaySongWithDelayedStart}" Margin="10,5"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
                                                 <Button Content="检查禁用Mods" Command="{Binding CheckForBannedMods}"  Margin="10,5"/>

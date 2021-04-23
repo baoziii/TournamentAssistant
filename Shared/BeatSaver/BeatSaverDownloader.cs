@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TournamentAssistantShared.BeatSaver
 {
@@ -15,6 +17,7 @@ namespace TournamentAssistantShared.BeatSaver
         private static string beatSaverUrl = "https://beatsaver.com";
         private static string beatSaverDownloadByHashUrl = $"{beatSaverUrl}/api/download/hash/";
         private static string beatSaverDownloadByKeyUrl = $"{beatSaverUrl}/api/download/key/";
+        private static string beatSaverGetSongInfoUrl = $"{beatSaverUrl}/api/maps/detail/";
 
         public static void DownloadSong(string hash, Action<string> whenFinished, Action<int> progressChanged = null, string customDownloadUrl = null)
         {
@@ -82,7 +85,7 @@ namespace TournamentAssistantShared.BeatSaver
             }            
         }
 
-        public static void DownloadSongInfoThreaded(string hash, Action<bool> whenFinished, Action<int> progressChanged = null, string customDownloadUrl = null)
+        public static void DownloadSongThreaded(string hash, Action<bool> whenFinished, Action<int> progressChanged = null, string customDownloadUrl = null)
         {
             new Thread(() =>
             {
@@ -116,6 +119,17 @@ namespace TournamentAssistantShared.BeatSaver
                 var length = result.LastIndexOf(".") - startIndex;
 
                 return result.Substring(startIndex, length);
+            }
+        }
+
+        public static async Task<SongInfo> GetSongInfo(string id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("user-agent", SharedConstructs.Name);
+
+                var response = await client.GetStringAsync($"{beatSaverGetSongInfoUrl}{id}");
+                return JsonConvert.DeserializeObject<SongInfo>(response);
             }
         }
     }
