@@ -1,3 +1,5 @@
+[**点此下载**](https://github.com/baoziii/TournamentAssistant/releases/download/0.4.6/TournamentAssistant.dll)
+
 THIS README IS INCOMPLETE! FEEL FREE TO HELP ME ADD TO IT!
 # TournamentAssistant
 A program designed to make it easier to coordinate tournaments for the VR rhythm game Beat Saber
