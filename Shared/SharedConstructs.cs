@@ -8,8 +8,8 @@ namespace TournamentAssistantShared
     public static class SharedConstructs
     {
         public const string Name = "比赛助手";
-        public const string Version = "0.4.6";
-        public const int VersionCode = 046;
+        public const string Version = "0.4.7";
+        public const int VersionCode = 047;
         public static string Changelog =
             "0.0.1: 开始搭建协调员面板的UI\n" +
             "0.1.1: 实现版本控制系统\n" +
@@ -41,7 +41,9 @@ namespace TournamentAssistantShared
             "0.4.3: 更新以支持1.13.4\n" +
             "0.4.4: 修复修改项bug\n" +
             "0.4.5: 合并了Arimodu的更改: 增加直连，更新日志，励志名言，服务器自动更新器。机器人更新：新增资格赛排行榜分数更新推送消息给选手。插件更新：重新添加不死模式，客户端不再存储服务器列表。协调员/插件更新：重新开启 直播时禁用自定义方块 开关" +
-            "0.4.6: 修复了资格赛不显示在列表中的问题，为不能使用自动暂停功能的玩家提供\"延迟开始\"选项, 修复了资格赛赛事创建/歌曲添加bug";
+            "0.4.6: 修复了资格赛不显示在列表中的问题，为不能使用自动暂停功能的玩家提供\"延迟开始\"选项, 修复了资格赛赛事创建/歌曲添加bug\n" +
+            "0.4.7: 修复了资格赛歌曲添加问题\n" +
+            "0.4.8-beta: 更新以支持1.16.1";
 
         public enum BeatmapDifficulty
         {

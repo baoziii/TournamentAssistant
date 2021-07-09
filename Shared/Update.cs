@@ -4,27 +4,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using TournamentAssistantShared.SimpleJSON;
 
-/**
- * Created by Moon on 9/12/2020, 1:41AM.
- * This is a very simple extension of a standard SystemClient,
- * with the addition of an event which provides packets as they
- * are received. This is useful for temporary clients (HostScraper)
- * so they can perform one simple action, wait for a reaction, then
- * disconnect. Should not be used for other purposes, use a SystemClient
- * for more robust clients, use a Client directly for more simple ones.
- */
-
 namespace TournamentAssistantShared
 {
     public class Update
     {
-        public static void PollForUpdates(Action doOnUpdateAvailable, CancellationToken cancellationToken)
+        public static void PollForUpdates(Action doAfterUpdate, CancellationToken cancellationToken)
         {
             Task.Run(async () =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    if (Version.Parse(SharedConstructs.Version) < await GetLatestRelease()) doOnUpdateAvailable();
+                    if (Version.Parse(SharedConstructs.Version) < await GetLatestRelease())
+                    {
+                        bool UpdateSuccess = await AutoUpdater.AttemptAutoUpdate();
+                        if (!UpdateSuccess)
+                        {
+                            Logger.Error("AutoUpdate Failed, The server will now shut down. Please update to continue.");
+                            doAfterUpdate();
+                        }
+                        else
+                        {
+                            Logger.Warning("Update Successful, exiting...");
+                            doAfterUpdate();
+                        }
+                    }
                     await Task.Delay(1000 * 60 * 10, cancellationToken);
                 }
             });
@@ -32,20 +35,18 @@ namespace TournamentAssistantShared
 
         public static async Task<Version> GetLatestRelease()
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler();
+            HttpClientHandler httpClientHandler = new();
             httpClientHandler.AllowAutoRedirect = false;
 
-            using (var client = new HttpClient(httpClientHandler))
-            {
-                client.DefaultRequestHeaders.Add("user-agent", $"{SharedConstructs.Name}");
+            using var client = new HttpClient(httpClientHandler);
+            client.DefaultRequestHeaders.Add("user-agent", $"{SharedConstructs.Name}");
 
-                var response = client.GetAsync($"https://api.github.com/repos/MatrikMoon/TournamentAssistant/releases/latest");
-                response.Wait();
+            var response = client.GetAsync($"https://api.github.com/repos/MatrikMoon/TournamentAssistant/releases/latest");
+            response.Wait();
 
-                var result = JSON.Parse(await response.Result.Content.ReadAsStringAsync());
+            var result = JSON.Parse(await response.Result.Content.ReadAsStringAsync());
 
-                return Version.Parse(result["tag_name"]);
-            }
+            return Version.Parse(result["tag_name"]);
         }
     }
 }
