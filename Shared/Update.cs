@@ -41,7 +41,7 @@ namespace TournamentAssistantShared
             using var client = new HttpClient(httpClientHandler);
             client.DefaultRequestHeaders.Add("user-agent", $"{SharedConstructs.Name}");
 
-            var response = client.GetAsync($"https://api.github.com/repos/MatrikMoon/TournamentAssistant/releases/latest");
+            var response = client.GetAsync($"https://api.github.com/repos/baoziii/TournamentAssistant/releases/latest");
             response.Wait();
 
             var result = JSON.Parse(await response.Result.Content.ReadAsStringAsync());
