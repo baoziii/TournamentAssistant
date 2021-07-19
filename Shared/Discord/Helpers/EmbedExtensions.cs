@@ -16,7 +16,7 @@ namespace TournamentAssistantShared.Discord.Helpers
             builder.Title = "<:white_check_mark:751010797781778482> 成功";
             builder.Color = Color.DarkGreen;
 
-            builder.AddField("Success", text);
+            builder.AddField("成功", text);
 
             return builder.Build();
         }
@@ -27,7 +27,7 @@ namespace TournamentAssistantShared.Discord.Helpers
             builder.Title = "<:page_with_curl:735592941338361897> 信息";
             builder.Color = Color.Blue;
 
-            builder.AddField("Info", text);
+            builder.AddField("信息", text);
 
             return builder.Build();
         }
@@ -35,10 +35,10 @@ namespace TournamentAssistantShared.Discord.Helpers
         public static Embed WarningEmbed(this string text)
         {
             var builder = new EmbedBuilder();
-            builder.Title = "<:warning:751009530170703882> 注意";
+            builder.Title = "<:warning:751009530170703882> 警告";
             builder.Color = Color.Gold;
 
-            builder.AddField("Warning", text);
+            builder.AddField("警告", text);
 
             return builder.Build();
         }
@@ -49,7 +49,7 @@ namespace TournamentAssistantShared.Discord.Helpers
             builder.Title = "<:octagonal_sign:751009755404959865> 错误";
             builder.Color = Color.Red;
 
-            builder.AddField("Error", text);
+            builder.AddField("错误", text);
 
             return builder.Build();
         }

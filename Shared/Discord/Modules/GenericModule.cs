@@ -51,13 +51,17 @@ namespace TournamentAssistantShared.Discord.Modules
             var builder = new EmbedBuilder();
             builder.Title = "<:page_with_curl:735592941338361897> 命令";
             builder.Color = new Color(random.Next(255), random.Next(255), random.Next(255));
+            Dictionary<string, string> moduleNameTranslation = new Dictionary<string, string>();
+            moduleNameTranslation.Add("GenericModule", "通用模块");
+            moduleNameTranslation.Add("PictureModule", "图片模块");
+            moduleNameTranslation.Add("QualifierModule", "预选赛模块");
 
             foreach (var module in CommandService.Modules)
             {
                 //Skip if the module has no commands
                 if (module.Commands.Count <= 0) continue;
 
-                builder.AddField(module.Name, $"```\n{string.Join("\n", module.Commands.Select(x => x.Name))}```", true);
+                builder.AddField(moduleNameTranslation[module.Name], $"```\n{string.Join("\n", module.Commands.Select(x => x.Name))}```", true);
             }
 
             await ReplyAsync(embed: builder.Build());

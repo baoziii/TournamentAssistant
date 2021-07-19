@@ -7,7 +7,7 @@ namespace TournamentAssistantShared
 {
     public static class SharedConstructs
     {
-        public const string Name = "比赛助手";
+        public const string Name = "TournamentAssistant";
         public const string Version = "0.4.7";
         public const int VersionCode = 047;
         public static string Changelog =

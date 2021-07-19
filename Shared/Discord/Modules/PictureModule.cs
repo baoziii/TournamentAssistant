@@ -10,7 +10,7 @@ namespace TournamentAssistantShared.Discord.Modules
     {
         public PictureService PictureService { get; set; }
 
-        [Command("cat")]
+        [Command("猫")]
         public async Task CatAsync()
         {
             var stream = await PictureService.GetCatPictureAsync();
@@ -18,7 +18,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await Context.Channel.SendFileAsync(stream, "cat.png");
         }
 
-        [Command("neko")]
+        [Command("猫娘")]
         public async Task NekoAsync()
         {
             var stream = await PictureService.GetNekoStreamAsync(PictureService.NekoType.Neko);
@@ -26,7 +26,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await Context.Channel.SendFileAsync(stream, "neko.png");
         }
 
-        [Command("nekolewd")]
+        [Command("猫娘涩图")]
         [RequireNsfw]
         public async Task NekoLewdAsync()
         {
@@ -35,7 +35,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await Context.Channel.SendFileAsync(stream, "nekolewd.png");
         }
 
-        [Command("nekogif")]
+        [Command("猫娘动图")]
         public async Task NekoGifAsync()
         {
             var gifLink = await PictureService.GetNekoGifAsync();
@@ -46,7 +46,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await ReplyAsync("", false, builder.Build());
         }
 
-        [Command("nekolewdgif")]
+        [Command("猫娘涩动图")]
         [RequireNsfw]
         public async Task NekoLewdGifAsync()
         {
@@ -58,7 +58,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await ReplyAsync("", false, builder.Build());
         }
 
-        [Command("lewd")]
+        [Command("涩图")]
         [RequireNsfw]
         public async Task LewdAsync()
         {
@@ -67,7 +67,7 @@ namespace TournamentAssistantShared.Discord.Modules
             await Context.Channel.SendFileAsync(stream, "lewd.png");
         }
 
-        [Command("lewdgif")]
+        [Command("涩动图")]
         [RequireNsfw]
         public async Task LewdGifAsync()
         {
